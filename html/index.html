@@ -17,7 +17,7 @@
         if (Hls.isSupported()) {
             var video = document.getElementById('video');
             var config = Hls.DefaultConfig;
-            config.debug = true;
+            //config.debug = true;
             var hls = new Hls(config);
             hls.loadSource('hls/live.m3u8');
             hls.attachMedia(video);
