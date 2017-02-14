@@ -1,0 +1,3 @@
+[submodule "contrib/hls.js"]
+	path = contrib/hls.js
+	url = https://github.com/dailymotion/hls.js.git

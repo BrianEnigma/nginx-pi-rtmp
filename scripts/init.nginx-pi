@@ -1,0 +1,58 @@
+#!/bin/sh
+
+DAEMON=/opt/nginx/sbin/nginx
+
+test -x $DAEMON || exit 0
+
+#. /lib/lsb/init-functions
+
+start() {
+    # Start daemons.
+    ret=0
+    echo -n "Starting nginx: "
+    su - pi -c $DAEMON
+    RETVAL=$?
+    echo
+    [ $ret -eq 0 ] && return 0 || return 1
+}
+
+stop() {
+    echo -n $"Shutting down $prog: "
+    killall nginx
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+stat /opt/nginx/logs/nginx.pid >/dev/null 2>&1
+running=$?
+
+# See how we were called.
+case "$1" in
+    start)
+	[ $running -eq 0 ] && exit 0
+	start
+	RETVAL=$?
+	;;
+    stop)
+	[ $running -eq 0 ] || exit 0
+	stop
+	RETVAL=$?
+	;;
+    reload)
+	[ $running -eq 0 ] || exit 7
+	stop
+    start
+	RETVAL=$?
+	;;
+    restart|force-reload)
+	stop
+	start
+	RETVAL=$?
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|reload|restart}"
+	RETVAL=2
+esac
+
+exit $RETVAL

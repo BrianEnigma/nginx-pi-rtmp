@@ -1,6 +1,3 @@
-# On the Raspberry Pi, you need the PCRE library and ssl headers:
-# `sudo apt-get install libpcre3-dev libssl-dev`
-
 NGINX_URL=http://nginx.org/download/nginx-1.11.9.tar.gz
 RTMP_URL=https://github.com/arut/nginx-rtmp-module/archive/v1.1.10.tar.gz
 
@@ -9,12 +6,24 @@ all: build/.compiled
 installclient:
 	# TODO: copy webcam scripts, init scripts
 
+installserverpi: build/.compiled
+	make -C build/nginx install
+	cp nginx-pi.conf /opt/nginx/conf/nginx.conf
+	cp scripts/init.nginx-pi /etc/init.d/nginx
+	ln -sf /etc/init.d/nginx /etc/rc3.d/S99nginx
+	ln -sf /etc/init.d/nginx /etc/rc5.d/S99nginx
+	cp html/* /opt/nginx/html/
+	cp contrib/hls.js/dist/hls.min.js /opt/nginx/html/player.min.js
+	chown -R pi /opt/nginx
+
 installserveraws: build/.compiled
 	make -C build/nginx install
-	chown -R ec2-user /opt/nginx
 	cp nginx-aws.conf /opt/nginx/conf/nginx.conf
 	cp scripts/init.nginx-aws /etc/init.d/nginx
 	ln -sf /etc/init.d/nginx /etc/rc3.d/S99nginx
+	cp html/* /opt/nginx/html/
+	cp contrib/hls.js/dist/hls.min.js /opt/nginx/html/player.min.js
+	chown -R ec2-user /opt/nginx
 
 compile: build/.compiled
 
@@ -45,7 +54,13 @@ dl/.downloaded:
 	cd dl; wget $(RTMP_URL)
 	touch dl/.downloaded
 
-awsprep:
+preppi:
+	apt-get install libpcre3-dev libssl-dev
+	rm -rf /opt/nginx
+	mkdir /opt/nginx
+	chown -R pi /opt/nginx
+
+prepaws:
 	yum update -y
 	yum upgrade -y
 	yum install -y git openssl-devel pcre-devel gcc

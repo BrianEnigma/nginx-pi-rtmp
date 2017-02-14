@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Live Raspberry Pi Video</title>
+    <script type="text/javascript" src="player.min.js"></script>
+    <style type="text/css" media="screen">
+    #video {display:block; width:90%; margin:0 auto;}
+    </style>
+</head>
+<body id="" onload="">
+    <video id="video"></video>
+    <script>
+        if (Hls.isSupported()) {
+            var video = document.getElementById('video');
+            var hls = new Hls();
+            hls.loadSource('hls/live.m3u8');
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play();
+            });
+        } else {
+            document.write("HLS video is not supported by your browser.")
+        }
+    </script>
+</body>
+</html>
