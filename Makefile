@@ -6,10 +6,14 @@ RTMP_URL=https://github.com/arut/nginx-rtmp-module/archive/v1.1.10.tar.gz
 
 all: build/.compiled
 
-install: build/.compiled
+installclient:
+	# TODO: copy webcam scripts, init scripts
+
+installserveraws: build/.compiled
 	make -C build/nginx install
-	chown -R `whoami` /opt/nginx
-	cp nginx.conf /opt/nginx/conf/
+	cp nginx-aws.conf /opt/nginx/conf/
+	cp scripts/init.nginx-aws /etc/init.d/nginx
+	ln -s /etc/init.d/nginx /etc/rc3.d/S99nginx
 
 compile: build/.compiled
 
@@ -41,7 +45,12 @@ dl/.downloaded:
 	touch dl/.downloaded
 
 awsprep:
-	yum install git openssl-devel pcre-devel gcc
+	yum update -y
+	yum upgrade -y
+	yum install -y git openssl-devel pcre-devel gcc
+	rm -rf /opt/nginx
+	mkdir /opt/nginx
+	chown -R ec2-user /opt/nginx
 
 .PHONY: clean
 clean:
