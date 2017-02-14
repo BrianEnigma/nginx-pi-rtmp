@@ -7,7 +7,9 @@ RTMP_URL=https://github.com/arut/nginx-rtmp-module/archive/v1.1.10.tar.gz
 all: build/.compiled
 
 install: build/.compiled
-	# TODO
+	make -C build/nginx install
+	chown -R `whoami` /opt/nginx
+	cp nginx.conf /opt/nginx/conf/
 
 compile: build/.compiled
 
