@@ -18,7 +18,7 @@ installserverpi: build/.compiled
 
 installserveraws: build/.compiled
 	make -C build/nginx install
-	cp scrips/nginx-aws.conf /opt/nginx/conf/nginx.conf
+	cp scripts/nginx-aws.conf /opt/nginx/conf/nginx.conf
 	cp scripts/init.nginx-aws /etc/init.d/nginx
 	ln -sf /etc/init.d/nginx /etc/rc3.d/S99nginx
 	cp html/* /opt/nginx/html/
