@@ -4,18 +4,32 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title>Live Raspberry Pi Video</title>
     <script type="text/javascript" src="player.min.js"></script>
+    <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
     <style type="text/css" media="screen">
     #video {display:block; width:90%; margin:0 auto;}
+    #message {text-weight:bold; color:red; text-align:center;}
     </style>
 </head>
 <body id="" onload="">
+    <div id="message">&nbsp;</div>
     <video id="video"></video>
     <script>
         if (Hls.isSupported()) {
             var video = document.getElementById('video');
-            var hls = new Hls();
+            var config = Hls.DefaultConfig;
+            config.debug = true;
+            var hls = new Hls(config);
             hls.loadSource('hls/live.m3u8');
             hls.attachMedia(video);
+            hls.on(Hls.Events.ERROR, function (event, data) {
+                    var errorType = data.type;
+                    var errorDetails = data.details;
+                    var errorFatal = data.fatal;
+                    if ('networkError' == errorType && 'manifestLoadError' == errorDetails && errorFatal)
+                    {
+                        $('#message').html("ERROR: Could not load manifest.");
+                    }
+            })
             hls.on(Hls.Events.MANIFEST_PARSED, function() {
                 video.play();
             });
