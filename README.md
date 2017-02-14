@@ -24,9 +24,17 @@ It also assumes some amount of basic Linux proficiency: shelling into a server (
 
 ## Theory of Operation
 
-- TODO: client side
-- TODO: server side
-- TODO: Linux security, sandboxed nginx, /opt/nginx and /tmp/hls (which is often a ramdisk)
+The overall architecture looks like the following diagram:
+
+![architecture](architecture.png)
+
+Specifically:
+
+- `raspivid` pulls h.264-encoded video from the Pi's camera hardware module. This is a raw video bitstream, without packaging.
+- `ffmpeg` takes that stream and, without re-encoding, packages it in FLV segments to send via RTMP to the server.
+- `nginx`, whether you're using the one locally on the Pi or out in the AWS cloud, receives that RTMP stream. It rebroadcasts that out to RTMP clients that connect. It can also repackage it as HTTP Live Streaming (HLS), which is more friendly to web and iOS players. It maintains a sliding window of the last 60 seconds of video.
+
+The nginx instance is meant to run in a sort of sandbox. This is not a formal and rigourously-enforced sandbox, like what you'd get with Docker or chroot. It runs as a non-root user, out of `/opt/nginx` and `/tmp/hls`. These need to be writable by the regular user (`pi` on the RasPi, `ec2-user` on AWS). Removing these folder and the service startup scripts in `/etc/init.d` will leave no trace of nginx. Because this is running as a regular user, it doesn't have access to privileged ports (such as the web server port 80), which is why the web server runs on port 8080.
 
 
 
@@ -69,6 +77,8 @@ At this point, you should be able to go to `http://{your Pi's IP address}:8080`,
 Because the console user interface occasionally changes, I won't be able to walk you step by step into acquiring an AWS EC2 server. First, you'll need to create an AWS account, if you haven't already. Go to the EC2 dashboard and create a t2.micro instance. Be sure to download the ssh key (it's a `*.pem` file) so that you can log in. Note the public DNS name for the instance. It's probably something like `ec2-99-99-99-99.us-west-2.compute.amazonaws.com`. You will need that for ssh and the web browser.
 
 You will next have to use the sidebar navigation to go into the “Network & Security > Security Groups” control panel. Creating the instance created a Security Group for you with a name like `launch-wizard-1`. You will want to select that, then use the “Inbound” tab at the bottom to open up inbound network connections on the ports we need. Port 22 (ssh) should already be configured. You will want to add 8080 (for the web server) from any source and port 1935 (for RTMP traffic) from any source.
+
+![aws_port_config](aws_port_config.jpg)
 
 Use your ssh key to log in to your server and run the following commands:
 
