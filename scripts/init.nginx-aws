@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+[ -f /etc/sysconfig/network ] && . /etc/sysconfig/network
+
+# Check that we're a privileged user
+[ `id -u` = 0 ] || exit 4
+
+# Check that networking is up.
+[ "${NETWORKING}" = "no" ] && exit 1
+
+[ -x /opt/nginx/sbin/nginx ] || exit 5
+
+prog="nginx"
+
+start() {
+    # Start daemons.
+    ret=0
+    echo -n $"Starting $prog: "
+    su - ec2-user -c /opt/nginx/sbin/nginx
+    RETVAL=$?
+    echo
+    [ $ret -eq 0 ] && return 0 || return 1
+}
+
+stop() {
+    echo -n $"Shutting down $prog: "
+    killproc nginx
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+status -p /opt/nginx/logs/nginx.pid >/dev/null
+running=$?
+
+# See how we were called.
+case "$1" in
+    start)
+	[ $running -eq 0 ] && exit 0
+	start
+	RETVAL=$?
+	;;
+    stop)
+	[ $running -eq 0 ] || exit 0
+	stop
+	RETVAL=$?
+	;;
+    reload)
+	[ $running -eq 0 ] || exit 7
+	stop
+    start
+	RETVAL=$?
+	;;
+    restart|force-reload)
+	stop
+	start
+	RETVAL=$?
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|reload|restart}"
+	RETVAL=2
+esac
+
+exit $RETVAL
