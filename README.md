@@ -1,6 +1,6 @@
 # nginx-pi-rtmp
 
-The nginx Pi RTMP project gives you a turnkey solution to getting video from the Raspberry Pi's camera out to your browser or mobile phone. It offers two hosting options for the server: one on the Raspberry Pi itself — meaning you can get to it only from your local area network, unless you do some firewall magic — and the other allowing your Pi to stream to an Amazon Web Services (AWS) Elastic Compute Cloud (EC2) instance, so that the world can access your stream. With the AWS server, everything is turnkey once you've acquired the server, but the initial requisition and firewall settings takes some manual work.
+[The nginx Pi RTMP project](https://github.com/BrianEnigma/nginx-pi-rtmp) gives you a turnkey solution to getting video from the Raspberry Pi's camera out to your browser or mobile phone. It offers two hosting options for the server: one on the Raspberry Pi itself — meaning you can get to it only from your local area network, unless you do some firewall magic — and the other allowing your Pi to stream to an Amazon Web Services (AWS) Elastic Compute Cloud (EC2) instance, so that the world can access your stream. With the AWS server, everything is turnkey once you've acquired the server, but the initial requisition and firewall settings takes some manual work.
 
 I created this project because I have a bird feeder that I thought would be fun to stream video from, but didn't want to invest in a fancy home security camera system. Routing 5V to a Raspberry Pi and letting it do the camera and WiFi seemed like a cheap way to do this.
 
