@@ -1,6 +1,8 @@
 #!/bin/bash
 # vim:expandtab:shiftwidth=4:tabstop=4:smarttab:autoindent:autoindent
 
+HOST=ec2-54-212-228-48.us-west-2.compute.amazonaws.com
+
 QUIET=no
 #QUIET=yes
 
@@ -12,10 +14,10 @@ if [ "$QUIET" == "yes" ]; then
 fi
 
 while [ true ]; do
-	raspivid $RASPIVID_FLAGS -n -w 1280 -h 720 -fps 30 -vf -hf \
+	raspivid $RASPIVID_FLAGS -n -w 1280 -h 720 -fps 30 -g 15 -vf -hf \
 		-t 86400000 -b 1800000 -ih -o - | \
 		ffmpeg $FFMPEG_FLAGS -re -i - -c:v copy -an -map 0:0 \
-		-f flv rtmp://127.0.0.1/live
+		-f flv rtmp://$HOST/live
 	sleep 1
 done
 
