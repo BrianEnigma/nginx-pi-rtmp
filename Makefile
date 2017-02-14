@@ -11,9 +11,10 @@ installclient:
 
 installserveraws: build/.compiled
 	make -C build/nginx install
-	cp nginx-aws.conf /opt/nginx/conf/
+	chown -R ec2-user /opt/nginx
+	cp nginx-aws.conf /opt/nginx/conf/nginx.conf
 	cp scripts/init.nginx-aws /etc/init.d/nginx
-	ln -s /etc/init.d/nginx /etc/rc3.d/S99nginx
+	ln -sf /etc/init.d/nginx /etc/rc3.d/S99nginx
 
 compile: build/.compiled
 
