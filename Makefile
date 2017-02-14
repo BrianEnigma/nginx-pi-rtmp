@@ -20,7 +20,7 @@ build/.compiled: build/.configured
 configure: build/.configured
 
 build/.configured: build/.extracted
-	cd build/nginx; ./configure --prefix=/opt/nginx --with-http_ssl_module --add-module=../rtmp
+	cd build/nginx; ./configure --prefix=/opt/nginx --with-http_ssl_module --with-http_stub_status_module --add-module=../rtmp
 	touch build/.configured
 
 extract: build/.extracted
@@ -39,6 +39,9 @@ dl/.downloaded:
 	cd dl; wget $(NGINX_URL)
 	cd dl; wget $(RTMP_URL)
 	touch dl/.downloaded
+
+awsprep:
+	yum install git openssl-devel pcre-devel gcc
 
 .PHONY: clean
 clean:
