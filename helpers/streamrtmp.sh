@@ -15,7 +15,7 @@ while [ true ]; do
 	raspivid $RASPIVID_FLAGS -n -w 1280 -h 720 -fps 30 -vf -hf \
 		-t 86400000 -b 1800000 -ih -o - | \
 		ffmpeg $FFMPEG_FLAGS -re -i - -c:v copy -an -map 0:0 \
-		-f flv rtmp://127.0.0.1/live
+		-f flv rtmp://127.0.0.1/live/live
 	sleep 1
 done
 
