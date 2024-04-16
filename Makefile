@@ -1,5 +1,5 @@
-NGINX_URL=http://nginx.org/download/nginx-1.11.9.tar.gz
-RTMP_URL=https://github.com/arut/nginx-rtmp-module/archive/v1.1.10.tar.gz
+NGINX_URL=https://nginx.org/download/nginx-1.25.5.tar.gz
+RTMP_URL=https://github.com/arut/nginx-rtmp-module/archive/refs/tags/v1.2.2.tar.gz
 
 all: build/.compiled
 
